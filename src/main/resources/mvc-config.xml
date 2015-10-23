@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <mvc:view-controller path="/" view-name="home"/>
+    <mvc:view-resolvers>
+        <mvc:content-negotiation use-not-acceptable="true">
+            <mvc:default-views>
+                <bean class="org.springframework.web.servlet.view.JstlView">
+                    <property name="url" value=""/>
+                </bean>
+            </mvc:default-views>
+        </mvc:content-negotiation>
+        <mvc:jsp prefix="/views/" suffix=".jsp"/>
+        <mvc:bean-name/>
+    </mvc:view-resolvers>
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:annotation-driven enable-matrix-variables="true" conversion-service="conversionService">
+        <mvc:async-support default-timeout="3000">
+            <mvc:callable-interceptors>
+                <bean class="com.liwang.sample.mvc.async.TimeoutCallableProcessingInterceptor"/>
+            </mvc:callable-interceptors>
+        </mvc:async-support>
+    </mvc:annotation-driven>
+
+    <context:component-scan base-package="com.liwang.sample.mvc"/>
+    <context:annotation-config/>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <bean class="com.liwang.sample.mvc.convert.MaskFormatAnnotationFormatterFactory"/>
+        </property>
+    </bean>
+
+</beans>
